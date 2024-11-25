@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<div class="row">
+    <div class="col-6">
+        <h3 align="center">Bar Chart</h3>
+        <canvas id="barChart" width="200" height="110" style="width:197px;height:110px;"></canvas>
+    </div>
+    <br />
+    <div class="col-6">
+        <h3 align="center">Pie Chart</h3>
+        <canvas id="pieChart" width="200" height="110" style="width:197px;height:110px;"></canvas>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: "/Home/GetTotalOrders",
+            data: "",
+            contentType: "application/json; charset=utf8",
+            dataType: "json",
+            success: OnSuccess,
+        });
+
+        function OnSuccess(data) {
+            const barChart = document.getElementById('barChart');
+            const pieChart = document.getElementById('pieChart');
+            var _data = data;
+            var _labels = _data[0];
+            var _CharData = _data[1];
+            var colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple'];
+
+            new Chart(barChart, {
+                type: 'bar',
+                data: {
+                    labels: _labels,
+                    datasets: [{
+                        backgroundColor: colors,
+                        data: _CharData,
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: 'black',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+            
+            new Chart(pieChart, {
+                type: 'pie',
+                data: {
+                    labels: _labels,
+                    datasets: [{
+                        backgroundColor: colors,
+                        data: _CharData,
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: 'black',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
